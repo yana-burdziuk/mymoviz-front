@@ -9,29 +9,23 @@ import styles from "../styles/Home.module.css";
 function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
   const [moviesData, setMoviesData] = useState([]);
-
-useEffect(() => {
-  fetch("https://mymoviz-back-red.vercel.app/movies")
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.results)
-      const movies = data.results.map((movie) => {
-        let overview = movie.overview;
-        if (overview.length > 250) {
-          overview = overview.substring(0, 250) + '...';
-        }
-        return {
-          title: movie.title,
-          overview,
-          voteAverage: movie.vote_average,
-          voteCount: movie.vote_count,
-          poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-        };
+  useEffect(() => {
+    fetch("http://localhost:3000/movies")
+      .then((response) => response.json())
+      .then((data) => {
+        const movies = data.movies.map((movie) => {
+          let overview = movie.overview;
+          if (overview.length > 250) {
+            overview = overview.substring(0, 250) + "...";
+          }
+          return {
+            ...movie,
+            overview,
+          };
+        });
+        setMoviesData(movies);
       });
-      setMoviesData(movies);
-    });
-}, []);
-  
+  }, []);
 
   // Liked movies (inverse data flow)
   const updateLikedMovies = (movieTitle) => {
@@ -68,9 +62,9 @@ useEffect(() => {
         isLiked={isLiked}
         title={data.title}
         overview={data.overview}
-        poster={data.poster}
-        voteAverage={data.voteAverage}
-        voteCount={data.voteCount}
+        poster={data.poster_path}
+        voteAverage={data.vote_average}
+        voteCount={data.vote_count}
       />
     );
   });
